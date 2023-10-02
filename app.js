@@ -1,17 +1,22 @@
-const { ProductManager, getJSONFromFile } = require("./productManager");
+const { ProductManager } = require("./productManager");
 const express = require("express");
 
 const PORT = 8080;
+
 const path = "./products.json";
-// console.log("ProductManager: ", ProductManager);
 
 const app = express();
+
 app.use(express.urlencoded({ extended: true }));
 
+
 app.get("/products", async (req, res) => {
+
   const { limit } = req.query;
 
-  const products = await getJSONFromFile(path);
+  const productManager = new ProductManager(path);
+
+  const products = await productManager.getProducts();
 
   return !limit
     ? res.status(200).send(products)
@@ -21,12 +26,12 @@ app.get("/products", async (req, res) => {
 app.get("/products/:idProduct", async (req, res) => {
   const { idProduct } = req.params;
 
-  const products = await getJSONFromFile(path);
+  const product = new ProductManager(path);
+  
+  const findedProduct = await product.getProductById(parseInt(idProduct));
 
-  const product = products.find((p) => p.id === parseInt(idProduct));
-
-  return product
-    ? res.json(product)
+  return findedProduct
+    ? res.json(findedProduct)
     : res.send(`Product with id ${idProduct} doesn't exists.`);
 });
 
@@ -45,12 +50,15 @@ const initiateFile = async () => {
   }
 };
 
-const productsLength = async () => getJSONFromFile(path);
+const startServer = async () => {
+  let products = await productManager.getProducts();
+  if(!products.length){
+    await initiateFile();
+  }
+  app.listen(PORT, () => {
+    console.log(`Servidor escuchando en el puerto ${PORT}`);
+  });
+}
 
-productsLength().then((data) => {
-  if (!data.length) initiateFile();
-});
+startServer();
 
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en el puerto ${PORT}`);
-});

@@ -23,24 +23,6 @@ app.get("/products/:idProduct", async (req, res) => {
   return findedProduct ? res.json(findedProduct) : res.send(`Product with id ${idProduct} doesn't exist.`);
 });
 
-// const initiateFile = async () => {
-//   for (let i = 0; i < 10; i++) {
-//     try {
-//       const newProduct = {
-//         title: `Producto ${i + 1}`,
-//         description: `Este es el producto ${i + 1}`,
-//         price: Math.floor(Math.random() * 1000),
-//         thumbnail: `Sin imagen`,
-//         code: `abc${i + 1}`,
-//         stock: Math.floor(Math.random() * 200),
-//       };
-//       await productManager.addProduct(newProduct);
-//       console.log(`Producto agregado: ${JSON.stringify(newProduct)}`);
-//     } catch (error) {
-//       console.error(`Error al agregar producto ${i + 1}:`, error);
-//     }
-//   }
-// };
 const initiateFile = async () => {
   for (let i = 0; i < 10; i++) {
     try {

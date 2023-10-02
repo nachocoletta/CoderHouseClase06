@@ -9,51 +9,58 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 
-const productManager = new ProductManager(path);
+const productManager = new ProductManager(path); 
 
 app.get("/products", async (req, res) => {
-
   const { limit } = req.query;
-
-  // const productManager = new ProductManager(path);
-
   const products = await productManager.getProducts();
-
-  return !limit
-    ? res.status(200).send(products)
-    : res.json(products.slice(0, parseInt(limit)));
+  return !limit ? res.status(200).send(products) : res.json(products.slice(0, parseInt(limit)));
 });
 
 app.get("/products/:idProduct", async (req, res) => {
   const { idProduct } = req.params;
-
-  // const product = new ProductManager(path);
-  
   const findedProduct = await productManager.getProductById(parseInt(idProduct));
-
-  return findedProduct
-    ? res.json(findedProduct)
-    : res.send(`Product with id ${idProduct} doesn't exists.`);
+  return findedProduct ? res.json(findedProduct) : res.send(`Product with id ${idProduct} doesn't exist.`);
 });
 
-
-
+// const initiateFile = async () => {
+//   for (let i = 0; i < 10; i++) {
+//     try {
+//       const newProduct = {
+//         title: `Producto ${i + 1}`,
+//         description: `Este es el producto ${i + 1}`,
+//         price: Math.floor(Math.random() * 1000),
+//         thumbnail: `Sin imagen`,
+//         code: `abc${i + 1}`,
+//         stock: Math.floor(Math.random() * 200),
+//       };
+//       await productManager.addProduct(newProduct);
+//       console.log(`Producto agregado: ${JSON.stringify(newProduct)}`);
+//     } catch (error) {
+//       console.error(`Error al agregar producto ${i + 1}:`, error);
+//     }
+//   }
+// };
 const initiateFile = async () => {
   for (let i = 0; i < 10; i++) {
-    await productManager.addProduct({
-      title: `Producto ${i + 1}`,
-      description: `Este es el producto ${i + 1}`,
-      price: Math.floor(Math.random() * 1000),
-      thumbnail: `Sin imagen`,
-      code: `abc${i + 1}`,
-      stock: Math.floor(Math.random() * 200),
-    });
+    try {
+      await productManager.addProduct({
+        title: `Producto ${i + 1}`,
+        description: `Este es el producto ${i + 1}`,
+        price: Math.floor(Math.random() * 1000),
+        thumbnail: `Sin imagen`,
+        code: `abc${i + 1}`,
+        stock: Math.floor(Math.random() * 200),
+      });
+    } catch (error) {
+      console.log(`Error al agregar producto ${i + 1}:`, error);
+    }
   }
 };
 
 const startServer = async () => {
   let products = await productManager.getProducts();
-  if(!products.length){
+  if (!products.length) {
     await initiateFile();
   }
   app.listen(PORT, () => {
@@ -62,4 +69,3 @@ const startServer = async () => {
 }
 
 startServer();
-

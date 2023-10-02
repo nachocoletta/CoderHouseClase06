@@ -9,12 +9,13 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 
+const productManager = new ProductManager(path);
 
 app.get("/products", async (req, res) => {
 
   const { limit } = req.query;
 
-  const productManager = new ProductManager(path);
+  // const productManager = new ProductManager(path);
 
   const products = await productManager.getProducts();
 
@@ -26,16 +27,16 @@ app.get("/products", async (req, res) => {
 app.get("/products/:idProduct", async (req, res) => {
   const { idProduct } = req.params;
 
-  const product = new ProductManager(path);
+  // const product = new ProductManager(path);
   
-  const findedProduct = await product.getProductById(parseInt(idProduct));
+  const findedProduct = await productManager.getProductById(parseInt(idProduct));
 
   return findedProduct
     ? res.json(findedProduct)
     : res.send(`Product with id ${idProduct} doesn't exists.`);
 });
 
-const productManager = new ProductManager(path);
+
 
 const initiateFile = async () => {
   for (let i = 0; i < 10; i++) {
